@@ -2,20 +2,28 @@ name: CI-CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
+    - uses: actions/setup-python@v5
       with:
         python-version: "3.11"
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
+    - run: pip install -r requirements.txt
+
+    - name: Run tests
+      run: echo "add pytest here later"
+
+  deploy:
+    needs: build-test   # 🔥 THIS is the dependency rule
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to Render
+      run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
